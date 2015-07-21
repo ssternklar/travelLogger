@@ -18,10 +18,10 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PostsFragment extends Fragment {
-    private ArrayAdapter<String> mPostsAdapter;
+public class JournalsFragment extends Fragment {
+    private ArrayAdapter<String> mJournalsAdapter;
 
-    public PostsFragment() {
+    public JournalsFragment() {
     }
 
     @Override
@@ -29,35 +29,35 @@ public class PostsFragment extends Fragment {
                              Bundle savedInstanceState) {
         //return inflater.inflate(R.layout.fragment_main, container, false);
         String[] data = {
-                "Post 1 Title",
-                "Post 2 Title",
-                "Post 3 Title",
-                "Post 4 Title",
-                "Post 5 Title",
-                "Post 6 Title",
-                "Post 7 Title"
+                "Journal 1 Title",
+                "Journal 2 Title",
+                "Journal 3 Title",
+                "Journal 4 Title",
+                "Journal 5 Title",
+                "Journal 6 Title",
+                "Journal 7 Title"
         };
         List<String> titlesList = new ArrayList<String>(Arrays.asList(data));
 
-        mPostsAdapter = new ArrayAdapter<String>(
+        mJournalsAdapter = new ArrayAdapter<String>(
                 getActivity(),
-                R.layout.list_item_post,
-                R.id.list_item_post_textview,
+                R.layout.list_item_journal,
+                R.id.list_item_journal_textview,
                 titlesList);
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_post);
-        listView.setAdapter(mPostsAdapter);
+        View rootView = inflater.inflate(R.layout.journals_fragment_main, container, false);
+        ListView listView = (ListView) rootView.findViewById(R.id.listview_journal);
+        listView.setAdapter(mJournalsAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                String data=(String)parent.getItemAtPosition(position);
-                intent.putExtra("title",data);
+                Intent intent = new Intent(getActivity(), DisplayPostsActivity.class);
                 startActivity(intent);
             }
         });
+
         return rootView;
+
     }
 }
