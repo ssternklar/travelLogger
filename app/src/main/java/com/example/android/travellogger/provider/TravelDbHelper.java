@@ -40,7 +40,7 @@ public class TravelDbHelper extends SQLiteOpenHelper {
                         EntryEntry.COLUMN_GEO_INTENT + " NVARCHAR(MAX), "+
                         //Set up our foreign key stuff in case we need it
                         " FOREIGN KEY (" + EntryEntry.COLUMN_JOURNAL_ID + ") REFERENCES " +
-                        JournalEntry.TABLE_NAME + " (" + JournalEntry.COLUMN_ID + ");";
+                        JournalEntry.TABLE_NAME + " (" + JournalEntry.COLUMN_ID + "));";
 
         db.execSQL(SQL_CREATE_JOURNAL_TABLE);
         db.execSQL(SQL_CREATE_ENTRY_TABLE);
