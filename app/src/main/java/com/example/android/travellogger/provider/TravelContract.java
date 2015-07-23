@@ -78,8 +78,6 @@ public class TravelContract {
         public static final String COLUMN_TEXT = "text";
         //The date of this entry
         public static final String COLUMN_DATE = "date";
-        //The time of this entry
-        public static final String COLUMN_TIME = "time";
         //An image associated with this entry, stored as URI string to the location
         public static final String COLUMN_IMAGE_CONTENT_PATH = "image_content_path";
         //The latitude that this event occurred at
