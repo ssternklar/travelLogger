@@ -8,4 +8,5 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="OK_button">OK</string>
     <string name="cancel_button">Cancel</string>
+    <string name="title_activity_create_post">CreatePostActivity</string>
 </resources>
