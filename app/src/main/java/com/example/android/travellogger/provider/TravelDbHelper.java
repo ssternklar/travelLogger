@@ -26,17 +26,17 @@ public class TravelDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_JOURNAL_TABLE =
                 "CREATE TABLE " + JournalEntry.TABLE_NAME + " (" +
                         JournalEntry.COLUMN_ID + " INTEGER PRIMARY KEY," +
-                        JournalEntry.COLUMN_NAME + " NVARCHAR(4000) NOT NULL );";
+                        JournalEntry.COLUMN_NAME + " TEXT NOT NULL );";
 
         final String SQL_CREATE_ENTRY_TABLE =
                 "CREATE TABLE " + EntryEntry.TABLE_NAME + " (" +
                         EntryEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                         EntryEntry.COLUMN_JOURNAL_ID + " INTEGER NOT NULL, " +
                         EntryEntry.COLUMN_DATE + " INTEGER NOT NULL, " +
-                        EntryEntry.COLUMN_TITLE + " NVARCHAR(4000) NOT NULL, " +
-                        EntryEntry.COLUMN_TEXT + " NVARCHAR(4000) NOT NULL, " +
-                        EntryEntry.COLUMN_IMAGE_CONTENT_PATH + " NVARCHAR(4000), " +
-                        EntryEntry.COLUMN_GEO_INTENT + " NVARCHAR(4000), "+
+                        EntryEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
+                        EntryEntry.COLUMN_TEXT + " TEXT NOT NULL, " +
+                        EntryEntry.COLUMN_IMAGE_CONTENT_PATH + " TEXT, " +
+                        EntryEntry.COLUMN_GEO_INTENT + " TEXT, "+
                         //Set up our foreign key stuff in case we need it
                         " FOREIGN KEY (" + EntryEntry.COLUMN_JOURNAL_ID + ") REFERENCES " +
                         JournalEntry.TABLE_NAME + " (" + JournalEntry.COLUMN_ID + "));";
