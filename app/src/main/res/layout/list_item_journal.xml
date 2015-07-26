@@ -5,4 +5,6 @@
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
-    android:id="@+id/list_item_journal_textview" />
+    android:id="@+id/list_item_journal_textview"
+    android:textColor="@color/grey"
+    android:textSize="16dp"/>

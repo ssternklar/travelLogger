@@ -48,8 +48,8 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     m_Text = input.getText().toString();
-                    Intent intent = new Intent(MainActivity.this, CreatePostActivity.class);
-                    intent.putExtra("post name", m_Text);
+                    Intent intent = new Intent(MainActivity.this, DisplayPostsActivity.class);
+                    intent.putExtra("journal name", m_Text);
                     startActivity(intent);
                 }
             });
