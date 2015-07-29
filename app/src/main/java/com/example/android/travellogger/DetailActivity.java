@@ -1,9 +1,13 @@
 package com.example.android.travellogger;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.google.android.gms.plus.PlusShare;
 
 
 public class DetailActivity extends ActionBarActivity {
@@ -33,7 +37,20 @@ public class DetailActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if(id==R.id.action_share) {
+//            Intent intent = new Intent(DetailActivity.this, PlusActivity.class);
+//            startActivity(intent);
+
+            Intent shareIntent = new PlusShare.Builder(this)
+                    .setType("text/plain")
+                    .setText("Welcome to the Google+ platform.")
+                    .setContentUrl(Uri.parse("https://developers.google.com/+/"))
+                    .getIntent();
+
+            startActivityForResult(shareIntent, 0);
+        }
 
         return super.onOptionsItemSelected(item);
     }
+
 }
