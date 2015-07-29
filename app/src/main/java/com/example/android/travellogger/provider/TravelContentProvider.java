@@ -134,7 +134,7 @@ public class TravelContentProvider extends ContentProvider {
             case JOURNAL:
                 dbID = db.insert(JournalEntry.TABLE_NAME, null, values);
                 if (dbID > 0)
-                    ret = TravelContract.BASE_URI.buildUpon().appendPath(values.getAsString("name")).build();
+                    ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(dbID)).build();
                 break;
             case ENTRY:
                 int value = Integer.parseInt(uri.getPathSegments().get(1));
@@ -142,20 +142,23 @@ public class TravelContentProvider extends ContentProvider {
                 dbID = db.insert(EntryEntry.TABLE_NAME, null, values);
                 if(dbID > 0)
                 {
-                    ret = TravelContract.BASE_URI.buildUpon().appendPath(Integer.toString(value)).appendPath(values.getAsString("name")).build();
+                    ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(dbID)).build();
                 }
                 break;
             case JOURNAL_AND_ENTRY:
                 Cursor cursor = db.query(JournalEntry.TABLE_NAME, new String[]{JournalEntry.COLUMN_ID}, JournalEntry.COLUMN_NAME + " = ?", new String[]{uri.getPathSegments().get(1)}, null, null, null);
-                cursor.moveToFirst();
-                values.put("journal_id", cursor.getLong(0));
-                dbID = db.insert(EntryEntry.TABLE_NAME, null, values);
-                if(dbID > 0)
-                {
-                    String journalName = uri.getPathSegments().get(1);
-                    ret = TravelContract.BASE_URI.buildUpon().appendPath(journalName).appendPath(values.getAsString("name")).build();
+                if(cursor.moveToFirst()) {
+                    values.put(EntryEntry.COLUMN_JOURNAL_ID, cursor.getLong(0));
+                    dbID = db.insert(EntryEntry.TABLE_NAME, null, values);
+                    if (dbID > 0) {
+                        String journalName = uri.getPathSegments().get(1);
+                        ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(journalName).build();
+                    }
+                    cursor.close();
                 }
-                cursor.close();
+                else{
+                    throw new UnsupportedOperationException("Entry attempted to access an uncreated journal");
+                }
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown URI detected: " + uri);

@@ -46,6 +46,12 @@ public class ContentProviderTest extends AndroidTestCase {
         assertFalse("Query did not delete correctly!", cursor2.moveToFirst());
         cursor.close();
         cursor2.close();
+
+
+        //Get the Uri associated with a given Journal to use to insert entries into said journal
+        values = new ContentValues();
+        values.put(JournalEntry.COLUMN_NAME, "My Journal");
+        Uri uri = resolver.insert(JournalEntry.CONTENT_URI, values);
     }
 
     public void testEntryQueries() throws Throwable
