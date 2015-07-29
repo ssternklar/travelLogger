@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
+import com.example.android.travellogger.provider.TravelContentProvider;
 import com.example.android.travellogger.provider.TravelContract.JournalEntry;
+import com.example.android.travellogger.provider.TravelContract.EntryEntry;
 
 /**
  * Created by Sam on 7/29/2015.
@@ -52,6 +54,31 @@ public class ContentProviderTest extends AndroidTestCase {
         values = new ContentValues();
         values.put(JournalEntry.COLUMN_NAME, "My Journal");
         Uri uri = resolver.insert(JournalEntry.CONTENT_URI, values);
+
+        values = new ContentValues();
+        values.put(EntryEntry.COLUMN_TITLE, "Testing Title");
+        values.put(EntryEntry.COLUMN_TEXT, "This is the text of the thingy. It exists. Woo. Yay!");
+        values.put(EntryEntry.COLUMN_DATE, 1);
+
+        //INSERT
+        resolver.insert(uri, values);
+        //QUERY
+        Cursor eCursor = resolver.query(uri, null, EntryEntry.COLUMN_DATE + " > 0", null, null);
+        assertTrue("We have not found our data!", eCursor.moveToFirst());
+        assertTrue("We have an incorrect number of columns!", eCursor.getColumnCount() == 6);
+        //UPDATE
+        values.put(EntryEntry.COLUMN_DATE, 5);
+        int changed = resolver.update(uri, values, EntryEntry.COLUMN_DATE + " > 0", null);
+        assertTrue("We failed to update the entry!", changed > 0);
+        //DELETE
+        resolver.delete(uri, EntryEntry.COLUMN_ID + " = 1", null);
+        eCursor.requery();
+        assertFalse("We failed to delete our data!", eCursor.moveToFirst());
+
+        resolver.insert(uri, values);
+        resolver.insert(uri, values);
+
+        assertTrue("Failed to safely delete things!", TravelContentProvider.SafeDeleteJournal(resolver, "My Journal") >= 2);
     }
 
     public void testEntryQueries() throws Throwable

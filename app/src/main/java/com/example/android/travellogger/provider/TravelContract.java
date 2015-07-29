@@ -80,7 +80,5 @@ public class TravelContract {
         public static final String COLUMN_DATE = "date";
         //An image associated with this entry, stored as URI string to the location
         public static final String COLUMN_IMAGE_CONTENT_PATH = "image_content_path";
-        //The latitude that this event occurred at
-        public static final String COLUMN_GEO_INTENT = "geo_intent";
     }
 }

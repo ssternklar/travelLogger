@@ -1,7 +1,9 @@
 package com.example.android.travellogger.provider;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,7 +41,7 @@ public class TravelContentProvider extends ContentProvider {
     private static final String journalSelection = JournalEntry.TABLE_NAME + "." + JournalEntry.COLUMN_NAME + " = ? ";
 
     private Cursor getEntriesByJournal(Uri uri, String[] projection, String sortOrder) {
-        String journalName = uri.getPathSegments().get(0);
+        String journalName = uri.getPathSegments().get(1);
 
         return queryBuilder.query(dbHelper.getReadableDatabase(),
                 projection,
@@ -222,6 +224,20 @@ public class TravelContentProvider extends ContentProvider {
         }
 
         return rows;
+    }
+
+    public static int SafeDeleteJournal(ContentResolver resolver, String journalName)
+    {
+        int ret = 0;
+        Cursor c = resolver.query(JournalEntry.CONTENT_URI, new String[]{JournalEntry.COLUMN_ID}, JournalEntry.COLUMN_NAME + " = ?", new String[]{journalName}, null);
+        if(c.moveToFirst()) {
+            int journalID = c.getInt(0);
+            String journalIDString = Integer.toString(journalID);
+            c.close();
+            ret = resolver.delete(EntryEntry.CONTENT_URI.buildUpon().appendPath(journalIDString).build(), EntryEntry.COLUMN_JOURNAL_ID + " = ?", new String[]{journalIDString});
+            ret += resolver.delete(JournalEntry.CONTENT_URI, JournalEntry.COLUMN_ID + " = ?", new String[]{journalIDString});
+        }
+        return ret;
     }
 
 }

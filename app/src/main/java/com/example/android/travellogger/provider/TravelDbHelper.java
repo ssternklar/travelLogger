@@ -36,7 +36,6 @@ public class TravelDbHelper extends SQLiteOpenHelper {
                         EntryEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                         EntryEntry.COLUMN_TEXT + " TEXT NOT NULL, " +
                         EntryEntry.COLUMN_IMAGE_CONTENT_PATH + " TEXT, " +
-                        EntryEntry.COLUMN_GEO_INTENT + " TEXT, "+
                         //Set up our foreign key stuff in case we need it
                         " FOREIGN KEY (" + EntryEntry.COLUMN_JOURNAL_ID + ") REFERENCES " +
                         JournalEntry.TABLE_NAME + " (" + JournalEntry.COLUMN_ID + "));";
