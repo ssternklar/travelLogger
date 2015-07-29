@@ -17,8 +17,8 @@ public class TravelContract {
     public static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
 
     //The path to our journal and entry tables from the query
-    public static final String PATH_JOURNAL = "/*";
-    public static final String PATH_ENTRY = PATH_JOURNAL + "/*";
+    public static final String PATH_JOURNAL = "journal";
+    public static final String PATH_ENTRY = "entry";
 
     //Forces dates to be at the beginning of the day so we can query based on it easier
     public static long normalizeDate(long date)

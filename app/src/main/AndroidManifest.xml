@@ -7,6 +7,10 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <provider
+            android:authorities="com.example.android.travellogger.provider"
+            android:name="com.example.android.travellogger.provider.TravelContentProvider"
+            ></provider>
         <activity
             android:name=".MainActivity"
             android:label="@string/journals_list_label" >
