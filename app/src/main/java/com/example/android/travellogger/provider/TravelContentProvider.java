@@ -3,12 +3,11 @@ package com.example.android.travellogger.provider;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.android.travellogger.provider.TravelContract.EntryEntry;
 import com.example.android.travellogger.provider.TravelContract.JournalEntry;
@@ -18,39 +17,10 @@ import com.example.android.travellogger.provider.TravelContract.JournalEntry;
  */
 public class TravelContentProvider extends ContentProvider {
     private static final UriMatcher matcher = buildUriMatcher();
-    private TravelDbHelper dbHelper;
 
     static final int JOURNAL = 10;
     static final int ENTRY = 20;
-    static final int JOURNAL_AND_ENTRY = 15;
-
-    private static final SQLiteQueryBuilder queryBuilder;
-
-    static {
-        queryBuilder = new SQLiteQueryBuilder();
-
-        queryBuilder.setTables(
-                EntryEntry.TABLE_NAME + " INNER JOIN " +
-                        JournalEntry.TABLE_NAME +
-                        " ON " + EntryEntry.TABLE_NAME +
-                        "." + EntryEntry.COLUMN_JOURNAL_ID +
-                        " = " + JournalEntry.TABLE_NAME +
-                        "." + JournalEntry.COLUMN_ID);
-    }
-
-    private static final String journalSelection = JournalEntry.TABLE_NAME + "." + JournalEntry.COLUMN_NAME + " = ? ";
-
-    private Cursor getEntriesByJournal(Uri uri, String[] projection, String sortOrder) {
-        String journalName = uri.getPathSegments().get(1);
-
-        return queryBuilder.query(dbHelper.getReadableDatabase(),
-                projection,
-                journalSelection,
-                new String[]{journalName},
-                null,
-                null,
-                sortOrder);
-    }
+    static final int ENTRY_BY_JOURNAL = 15;
 
     static UriMatcher buildUriMatcher() {
 
@@ -59,16 +29,16 @@ public class TravelContentProvider extends ContentProvider {
 
         matcher.addURI(auth, TravelContract.PATH_JOURNAL, JOURNAL);
         matcher.addURI(auth, TravelContract.PATH_ENTRY + "/#", ENTRY);
-        matcher.addURI(auth, TravelContract.PATH_ENTRY + "/*", JOURNAL_AND_ENTRY);
+        matcher.addURI(auth, TravelContract.PATH_ENTRY + "/*", ENTRY_BY_JOURNAL);
 
         return matcher;
     }
 
     @Override
     public boolean onCreate() {
-        dbHelper = new TravelDbHelper(getContext());
         return true;
     }
+
 
     @Override
     public String getType(Uri uri){
@@ -79,7 +49,7 @@ public class TravelContentProvider extends ContentProvider {
                 return JournalEntry.CONTENT_TYPE;
             case ENTRY:
                 return EntryEntry.CONTENT_ITEM_TYPE;
-            case JOURNAL_AND_ENTRY:
+            case ENTRY_BY_JOURNAL:
                 return JournalEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown URI tested: " + uri);
@@ -89,11 +59,12 @@ public class TravelContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
+        final SQLiteDatabase db = new TravelDbHelper(getContext()).getReadableDatabase();
         Cursor ret;
         switch (matcher.match(uri))
         {
             case JOURNAL:
-                ret = dbHelper.getReadableDatabase().query(
+                ret = db.query(
                         JournalEntry.TABLE_NAME,
                         projection,
                         selection,
@@ -101,10 +72,10 @@ public class TravelContentProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
-                        );
+                );
                 break;
             case ENTRY:
-                ret = dbHelper.getReadableDatabase().query(
+                ret = db.query(
                         EntryEntry.TABLE_NAME,
                         projection,
                         selection,
@@ -112,10 +83,18 @@ public class TravelContentProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
-                        );
+                );
                 break;
-            case JOURNAL_AND_ENTRY:
-                ret = getEntriesByJournal(uri, projection, selection);
+            case ENTRY_BY_JOURNAL:
+                if(selection == (null) || selection.equals(""))
+                    selection = "1";
+                Cursor cursor = db.query(JournalEntry.TABLE_NAME, new String[]{JournalEntry.COLUMN_ID}, JournalEntry.COLUMN_NAME + " = ?", new String[]{uri.getPathSegments().get(1)}, null, null, null);
+                if(cursor.moveToFirst()) {
+                    long journalID = cursor.getLong(0);
+                    ret = db.query(EntryEntry.TABLE_NAME, projection, selection + " AND " + EntryEntry.COLUMN_JOURNAL_ID + " = " + journalID, selectionArgs, null, null, sortOrder);
+                }
+                else throw new UnsupportedOperationException("There is no journal with the name: " + uri.getPathSegments().get(1));
+                cursor.close();
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown URI detected: " + uri);
@@ -128,15 +107,16 @@ public class TravelContentProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values)
     {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final SQLiteDatabase db = new TravelDbHelper(getContext()).getWritableDatabase();
         Uri ret = null;
         long dbID;
         switch (matcher.match(uri))
         {
             case JOURNAL:
-                dbID = db.insert(JournalEntry.TABLE_NAME, null, values);
+                dbID = db.insertOrThrow(JournalEntry.TABLE_NAME, null, values);
                 if (dbID > 0)
                     ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(dbID)).build();
+                else throw new android.database.SQLException("Failed to insert row into uri: " + uri);
                 break;
             case ENTRY:
                 int value = Integer.parseInt(uri.getPathSegments().get(1));
@@ -146,8 +126,9 @@ public class TravelContentProvider extends ContentProvider {
                 {
                     ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(dbID)).build();
                 }
+                else throw new android.database.SQLException("Failed to insert row into uri: " + uri);
                 break;
-            case JOURNAL_AND_ENTRY:
+            case ENTRY_BY_JOURNAL:
                 Cursor cursor = db.query(JournalEntry.TABLE_NAME, new String[]{JournalEntry.COLUMN_ID}, JournalEntry.COLUMN_NAME + " = ?", new String[]{uri.getPathSegments().get(1)}, null, null, null);
                 if(cursor.moveToFirst()) {
                     values.put(EntryEntry.COLUMN_JOURNAL_ID, cursor.getLong(0));
@@ -156,6 +137,7 @@ public class TravelContentProvider extends ContentProvider {
                         String journalName = uri.getPathSegments().get(1);
                         ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(journalName).build();
                     }
+                    else throw new android.database.SQLException("Failed to insert row into uri: " + uri);
                     cursor.close();
                 }
                 else{
@@ -165,14 +147,13 @@ public class TravelContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown URI detected: " + uri);
         }
-
         return ret;
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs)
     {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final SQLiteDatabase db = new TravelDbHelper(getContext()).getWritableDatabase();
 
         int rows = 0;
 
@@ -182,9 +163,18 @@ public class TravelContentProvider extends ContentProvider {
         {
             case JOURNAL:
                 rows = db.delete(JournalEntry.TABLE_NAME, selection, selectionArgs);
+                Log.w("TravelLogger", "Journal deleted without using TravelContentProvider.SafeDelete()! Possible journal entries left undeleted!");
                 break;
             case ENTRY:
-                rows = db.delete(EntryEntry.TABLE_NAME, selection, selectionArgs);
+                rows = db.delete(EntryEntry.TABLE_NAME, selection + " AND " + EntryEntry.COLUMN_JOURNAL_ID + " = " + uri.getPathSegments().get(1), selectionArgs);
+                break;
+            case ENTRY_BY_JOURNAL:
+                Cursor cursor = db.query(JournalEntry.TABLE_NAME, new String[]{JournalEntry.COLUMN_ID}, JournalEntry.COLUMN_NAME + " = ?", new String[]{uri.getPathSegments().get(1)}, null, null, null);
+                if(cursor.moveToFirst()) {
+                    long journalID = cursor.getLong(0);
+                    rows = db.delete(EntryEntry.TABLE_NAME, selection + " AND " + EntryEntry.COLUMN_JOURNAL_ID + " = " + journalID, selectionArgs);
+                }
+                else throw new UnsupportedOperationException("No journal with name: " + uri.getPathSegments().get(1));
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown Uri detected: " + uri);
@@ -194,16 +184,20 @@ public class TravelContentProvider extends ContentProvider {
         {
             getContext().getContentResolver().notifyChange(uri, null);
         }
-
         return rows;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
     {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final SQLiteDatabase db = new TravelDbHelper(getContext()).getWritableDatabase();
 
         int rows = 0;
+
+        if(selection == (null) || selection.equals(""))
+        {
+            selection = "1";
+        }
 
         switch (matcher.match(uri))
         {
@@ -214,6 +208,16 @@ public class TravelContentProvider extends ContentProvider {
                 values.put("journal_id", Integer.parseInt(uri.getPathSegments().get(1)));
                 rows = db.update(EntryEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
+            case ENTRY_BY_JOURNAL:
+                Cursor c = db.query(JournalEntry.TABLE_NAME, new String[]{JournalEntry.COLUMN_ID}, JournalEntry.COLUMN_NAME + " = ?", new String[]{uri.getPathSegments().get(1)}, null,null,null);
+                if(!c.moveToFirst())
+                {
+                    throw new UnsupportedOperationException("There is no journal with the following name: " + uri.getPathSegments().get(1));
+                }
+                long dbIndex = c.getLong(0);
+                rows = db.update(EntryEntry.TABLE_NAME, values, selection + " AND " + EntryEntry.COLUMN_JOURNAL_ID + " = " + dbIndex, selectionArgs);
+                c.close();
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown Uri detected: " + uri);
         }
@@ -222,7 +226,6 @@ public class TravelContentProvider extends ContentProvider {
         {
             getContext().getContentResolver().notifyChange(uri, null);
         }
-
         return rows;
     }
 

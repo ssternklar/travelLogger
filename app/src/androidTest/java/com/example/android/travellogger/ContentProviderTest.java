@@ -14,9 +14,10 @@ import com.example.android.travellogger.provider.TravelContract.EntryEntry;
  * Created by Sam on 7/29/2015.
  */
 public class ContentProviderTest extends AndroidTestCase {
-    public void setUp()
+    public void setUp() throws Exception
     {
         getContext().deleteDatabase("travel.db");
+        super.setUp();
     }
 
     public void testJournalQueries() throws Throwable
@@ -60,6 +61,7 @@ public class ContentProviderTest extends AndroidTestCase {
         values.put(EntryEntry.COLUMN_TEXT, "This is the text of the thingy. It exists. Woo. Yay!");
         values.put(EntryEntry.COLUMN_DATE, 1);
 
+
         //INSERT
         resolver.insert(uri, values);
         //QUERY
@@ -78,11 +80,8 @@ public class ContentProviderTest extends AndroidTestCase {
         resolver.insert(uri, values);
         resolver.insert(uri, values);
 
+        //SAFE DELETE TEST
         assertTrue("Failed to safely delete things!", TravelContentProvider.SafeDeleteJournal(resolver, "My Journal") >= 2);
-    }
-
-    public void testEntryQueries() throws Throwable
-    {
-
+        eCursor.close();
     }
 }
