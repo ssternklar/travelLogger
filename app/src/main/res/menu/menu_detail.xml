@@ -4,7 +4,18 @@
     tools:context="com.example.android.travellogger.DetailActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_share" android:title=""
-        android:icon="@android:drawable/ic_menu_share"
-        app:showAsAction="always"/>
+    <!--<item android:id="@+id/action_share" android:title=""-->
+        <!--android:icon="@android:drawable/ic_menu_share"-->
+        <!--app:showAsAction="always">-->
+        <!--<menu>-->
+            <!--<item android:id="@+id/Google"-->
+                <!--android:title="Google+"/>-->
+            <!--<item android:id="@+id/Facebook"-->
+                <!--android:title="Facebook"/>-->
+        <!--</menu>-->
+        <!--</item>-->
+    <item android:id="@+id/action_share"
+        android:title="@string/action_share"
+        app:showAsAction="always"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
 </menu>

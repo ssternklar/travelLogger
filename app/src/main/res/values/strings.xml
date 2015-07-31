@@ -9,5 +9,7 @@
     <string name="OK_button">OK</string>
     <string name="cancel_button">Cancel</string>
     <string name="title_activity_create_post">CreatePostActivity</string>
-    <string name="title_activity_plus">Placeholder</string>
+
+    <string name="action_share">Share</string>
+
 </resources>
