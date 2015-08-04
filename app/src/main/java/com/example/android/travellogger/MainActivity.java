@@ -15,7 +15,7 @@ import com.example.android.travellogger.provider.TravelContract;
 public class MainActivity extends ActionBarActivity {
 
     private String m_Text;
-    private boolean mTwoPane;
+    private static boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +23,11 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         if(findViewById(R.id.detail_container) != null) {
             mTwoPane = true;
-            if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.detail_container, new DetailActivityFragment(), "DF")
-                        .commit();
-            }
+//            if (savedInstanceState == null) {
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.detail_container, new DetailActivityFragment(), "DF")
+//                        .commit();
+//            }
         } else {
             mTwoPane = false;
         }
@@ -83,5 +83,7 @@ public class MainActivity extends ActionBarActivity {
 
             return super.onOptionsItemSelected(item);
     }
-
+    public static boolean ismTwoPane() {
+        return mTwoPane;
+    }
 }

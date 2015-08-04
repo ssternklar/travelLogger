@@ -73,11 +73,13 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
                             .build());
                     //on click, we need to replace the fragment from main activity with
                     //the list of posts.
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment, new PostsFragment())
-                            .commit();
-                    if(getActivity().findViewById(R.id.detail_container) != null) {
+                    if(getActivity().findViewById(R.id.detail_container) == null) {
                         startActivity(intent);
+                    } else {
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .addToBackStack(null)
+                                .replace(R.id.fragment, new PostsFragment())
+                                .commit();
                     }
                 }
             }

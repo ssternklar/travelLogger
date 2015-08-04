@@ -1,3 +1,7 @@
+<RelativeLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -12,7 +16,9 @@
     <ListView
         android:id="@+id/listview_post"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null" />
+        android:layout_height="match_parent"/>
+        <!--android:divider="@color/light_teal"-->
+        <!--android:dividerHeight="1dp"/>-->
 </FrameLayout>
     </ScrollView>
+    </RelativeLayout>

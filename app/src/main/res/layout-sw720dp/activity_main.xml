@@ -5,6 +5,8 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:baselineAligned="false"
 android:divider="?android:attr/dividerHorizontal"
+    android:showDividers="middle"
+    android:dividerPadding="2dp"
 android:orientation="horizontal"
 tools:context="com.example.android.travellogger.MainActivity">
 
@@ -21,10 +23,12 @@ This layout is a two-pane layout for the Items master/detail flow.
     tools:layout="@layout/journals_fragment_main"/>
     <!--tools:layout="@android:layout/list_content"/>-->
 
-<FrameLayout
+<fragment
     android:id="@+id/detail_container"
+    android:name="com.example.android.travellogger.DetailActivityFragment"
     android:layout_width="0dp"
     android:layout_height="match_parent"
-    android:layout_weight="4" />
+    android:layout_weight="4"
+    tools:layout="@layout/fragment_detail"/>
 
 </LinearLayout>

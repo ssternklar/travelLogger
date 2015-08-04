@@ -28,12 +28,18 @@ public class DetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
         Intent intent = getActivity().getIntent();
-        String postTitle = intent.getStringExtra("title");
+        String postTitle;
+        boolean mTwoPane = MainActivity.ismTwoPane();
+        if (!mTwoPane) {
+            postTitle = intent.getStringExtra("title");
+            getActivity().setTitle(postTitle);
+        } else {
+            Bundle bundle=this.getArguments();
+            postTitle = bundle.getString("title", "Title");
+        }
         TextView titleTextView = (TextView) rootView.findViewById(R.id.detail_text);
         titleTextView.setText(postTitle);
-        getActivity().setTitle(postTitle);
         return rootView;
     }
     @Override

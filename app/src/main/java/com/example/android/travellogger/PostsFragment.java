@@ -21,6 +21,7 @@ import java.util.List;
 public class PostsFragment extends Fragment {
     private ArrayAdapter<String> mPostsAdapter;
 
+
     public PostsFragment() {
     }
 
@@ -52,10 +53,21 @@ public class PostsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                String data=(String)parent.getItemAtPosition(position);
-                intent.putExtra("title",data);
-                startActivity(intent);
+                boolean mTwoPane = MainActivity.ismTwoPane();
+                if (!mTwoPane) {
+                    Intent intent = new Intent(getActivity(), DetailActivity.class);
+                    String data = (String) parent.getItemAtPosition(position);
+                    intent.putExtra("title", data);
+                    startActivity(intent);
+                } else {
+                    DetailActivityFragment detail = new DetailActivityFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("title", (String) parent.getItemAtPosition(position));
+                    detail.setArguments(bundle);
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.detail_container, detail)
+                            .commit();
+                }
             }
         });
         return rootView;
