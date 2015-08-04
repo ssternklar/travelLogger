@@ -13,6 +13,7 @@ import android.widget.EditText;
 public class DisplayPostsActivity extends ActionBarActivity {
 
     private String m_Text;
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

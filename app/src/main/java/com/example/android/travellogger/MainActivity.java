@@ -3,10 +3,8 @@ package com.example.android.travellogger;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -17,11 +15,22 @@ import com.example.android.travellogger.provider.TravelContract;
 public class MainActivity extends ActionBarActivity {
 
     private String m_Text;
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(findViewById(R.id.detail_container) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.detail_container, new DetailActivityFragment(), "DF")
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+        }
     }
 
 

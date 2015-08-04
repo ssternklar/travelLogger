@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.android.sunshine.app.JournalsFragment"
-    android:background="@color/black"
+    android:background="@color/light_teal"
     android:paddingLeft="10dp">
     <ListView
         android:id="@+id/listview_journal"
