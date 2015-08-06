@@ -12,6 +12,8 @@ import android.util.Log;
 import com.example.android.travellogger.provider.TravelContract.EntryEntry;
 import com.example.android.travellogger.provider.TravelContract.JournalEntry;
 
+import java.util.Calendar;
+
 /**
  * Created by Sam on 7/28/2015.
  */
@@ -120,7 +122,8 @@ public class TravelContentProvider extends ContentProvider {
                 break;
             case ENTRY:
                 int value = Integer.parseInt(uri.getPathSegments().get(1));
-                values.put("journal_id", value);
+                values.put(EntryEntry.COLUMN_JOURNAL_ID, value);
+                values.put(EntryEntry.COLUMN_DATE, Calendar.getInstance().getTime().getTime());
                 dbID = db.insert(EntryEntry.TABLE_NAME, null, values);
                 if(dbID > 0)
                 {
@@ -132,6 +135,7 @@ public class TravelContentProvider extends ContentProvider {
                 Cursor cursor = db.query(JournalEntry.TABLE_NAME, new String[]{JournalEntry.COLUMN_ID}, JournalEntry.COLUMN_NAME + " = ?", new String[]{uri.getPathSegments().get(1)}, null, null, null);
                 if(cursor.moveToFirst()) {
                     values.put(EntryEntry.COLUMN_JOURNAL_ID, cursor.getLong(0));
+                    values.put(EntryEntry.COLUMN_DATE, Calendar.getInstance().getTime().getTime());
                     dbID = db.insert(EntryEntry.TABLE_NAME, null, values);
                     if (dbID > 0) {
                         String journalName = uri.getPathSegments().get(1);

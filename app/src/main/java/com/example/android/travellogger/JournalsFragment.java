@@ -68,9 +68,9 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
                 mPosition = position;
                 if(cursor != null) {
                     Intent intent = new Intent(getActivity(), DisplayPostsActivity.class);
-                    intent.putExtra("uri", TravelContract.JournalEntry.CONTENT_URI.buildUpon()
+                    intent.putExtra("uri", TravelContract.EntryEntry.CONTENT_URI.buildUpon()
                             .appendPath(Integer.toString(cursor.getInt(COL_JOURNAL_ID)))
-                            .build());
+                            .build().toString());
                     //on click, we need to replace the fragment from main activity with
                     //the list of posts.
                     if(getActivity().findViewById(R.id.detail_container) == null) {
@@ -99,7 +99,6 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
     public Loader<Cursor> onCreateLoader(int i, Bundle b)
     {
         String sortOrder = TravelContract.JournalEntry.COLUMN_ID + " DESC";
-        Log.d("Test", "Made it here");
         return new CursorLoader(getActivity(),
                 TravelContract.JournalEntry.CONTENT_URI,
                 DB_ROWS,
@@ -118,6 +117,7 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
         }
     }
 
+    @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mJournalsAdapter.swapCursor(null);
     }

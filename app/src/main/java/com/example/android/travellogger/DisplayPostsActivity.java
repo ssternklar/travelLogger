@@ -1,13 +1,17 @@
 package com.example.android.travellogger;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+
+import com.example.android.travellogger.provider.TravelContract;
 
 
 public class DisplayPostsActivity extends ActionBarActivity {
@@ -48,9 +52,14 @@ public class DisplayPostsActivity extends ActionBarActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     m_Text = input.getText().toString();
-                    Intent intent = new Intent(DisplayPostsActivity.this, CreatePostActivity.class);
+                    /*Intent intent = new Intent(DisplayPostsActivity.this, CreatePostActivity.class);
                     intent.putExtra("post name", m_Text);
-                    startActivity(intent);
+                    startActivity(intent);*/
+                    ContentValues values = new ContentValues();
+                    values.put(TravelContract.EntryEntry.COLUMN_TITLE, m_Text);
+                    Uri uri = Uri.parse(getIntent().getStringExtra("uri"));
+                    getContentResolver().insert(uri, values);
+                    getContentResolver().notifyChange(uri, null);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -80,5 +80,7 @@ public class TravelContract {
         public static final String COLUMN_DATE = "date";
         //An image associated with this entry, stored as URI string to the location
         public static final String COLUMN_IMAGE_CONTENT_PATH = "image_content_path";
+        //The false id associated with this post
+        public static final String COLUMN_ONLINE_ID = "fakeid";
     }
 }
