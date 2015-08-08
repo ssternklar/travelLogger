@@ -2,8 +2,10 @@ package com.example.android.travellogger;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -14,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.travellogger.provider.TravelContract;
@@ -34,7 +37,7 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         TextView titleTextView = (TextView) rootView.findViewById(R.id.detail_text);
-
+        ImageView imageView = (ImageView)rootView.findViewById(R.id.detail_image_view);
         Intent intent = getActivity().getIntent();
 
         Uri uri;
@@ -56,9 +59,25 @@ public class DetailActivityFragment extends Fragment {
 
             String text = cursor.getString(2);
 
+            String imageUriString = cursor.getString(5);
+
+
+            if(imageUriString != null) {
+                Uri imageUri = Uri.parse(imageUriString);
+                try {
+                    Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                    imageView.setImageBitmap(bmp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
             getActivity().setTitle(postTitle);
 
             titleTextView.setText(text);
+
+
         }
         else
         {
