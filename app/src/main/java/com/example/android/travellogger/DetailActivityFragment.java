@@ -1,6 +1,8 @@
 package com.example.android.travellogger;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -13,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.android.travellogger.provider.TravelContract;
 
 
 /**
@@ -28,20 +32,41 @@ public class DetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        TextView titleTextView = (TextView) rootView.findViewById(R.id.detail_text);
+
         Intent intent = getActivity().getIntent();
-        String postTitle;
+
+        Uri uri;
         boolean mTwoPane = MainActivity.ismTwoPane();
         if (!mTwoPane) {
-            postTitle = intent.getStringExtra("title");
-            getActivity().setTitle(postTitle);
+            uri = Uri.parse(intent.getStringExtra("uri"));
         } else {
             Bundle bundle=this.getArguments();
-            postTitle = bundle.getString("title", "Title");
+            uri = Uri.parse(bundle.getString("Uri"));
         }
-        TextView titleTextView = (TextView) rootView.findViewById(R.id.detail_text);
-        titleTextView.setText(postTitle);
+
+        Cursor cursor = getActivity().getContentResolver().query(uri,
+                PostsFragment.DB_ROWS,
+                TravelContract.EntryEntry.COLUMN_ID +" = ?",
+                new String[]{uri.getPathSegments().get(2)},
+                null);
+        if(cursor.moveToFirst()) {
+            String postTitle = cursor.getString(1);
+
+            String text = cursor.getString(2);
+
+            getActivity().setTitle(postTitle);
+
+            titleTextView.setText(text);
+        }
+        else
+        {
+            titleTextView.setText("Something went horribly wrong, please contact the developers and let them know you got this!!");
+        }
         return rootView;
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Retrieve the share menu item

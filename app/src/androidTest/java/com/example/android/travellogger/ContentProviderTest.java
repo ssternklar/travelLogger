@@ -67,7 +67,7 @@ public class ContentProviderTest extends AndroidTestCase {
         //QUERY
         Cursor eCursor = resolver.query(uri, null, EntryEntry.COLUMN_DATE + " > 0", null, null);
         assertTrue("We have not found our data!", eCursor.moveToFirst());
-        assertTrue("We have an incorrect number of columns!", eCursor.getColumnCount() == 6);
+        assertTrue("We have an incorrect number of columns!", eCursor.getColumnCount() == 7);
         //UPDATE
         values.put(EntryEntry.COLUMN_DATE, 5);
         int changed = resolver.update(uri, values, EntryEntry.COLUMN_DATE + " > 0", null);

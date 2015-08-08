@@ -57,11 +57,12 @@ public class DisplayPostsActivity extends ActionBarActivity {
                     values.put(TravelContract.EntryEntry.COLUMN_TITLE, m_Text);
                     Uri uri = Uri.parse(getIntent().getStringExtra("uri"));
 
-                    getContentResolver().insert(uri, values);
+                    Uri newUri = getContentResolver().insert(uri, values);
                     getContentResolver().notifyChange(uri, null);
 
                     Intent intent = new Intent(DisplayPostsActivity.this, CreatePostActivity.class);
                     intent.putExtra("post name", m_Text);
+                    intent.putExtra("uri", newUri.toString());
                     startActivity(intent);
                 }
             });

@@ -36,7 +36,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onCreateOptionsMenu(menu,inflater);
     }
 
-    private static String[] DB_ROWS = {
+    public static String[] DB_ROWS = {
         TravelContract.EntryEntry.COLUMN_ID,
         TravelContract.EntryEntry.COLUMN_TITLE,
         TravelContract.EntryEntry.COLUMN_TEXT,
@@ -88,16 +88,21 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
                     data = cursor.getString(COL_TITLE);
                 }
 
+                String idString = Long.toString(cursor.getLong(0));
+                Uri newUri = uri.buildUpon().appendPath(idString).build();
+
                 boolean mTwoPane = MainActivity.ismTwoPane();
 
                 if (!mTwoPane) {
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
                     intent.putExtra("title", data);
+                    intent.putExtra("uri", newUri.toString());
                     startActivity(intent);
                 } else {
                     DetailActivityFragment detail = new DetailActivityFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString("title", data);
+                    bundle.putString("uri", newUri.toString());
                     detail.setArguments(bundle);
                     getFragmentManager().beginTransaction()
                             .replace(R.id.detail_container, detail)
@@ -113,7 +118,9 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         String uriString = getActivity().getIntent().getStringExtra("uri");
         if(uriString == null)
         {
-            uriString = savedInstanceState.getString("uri");
+            if(savedInstanceState != null) {
+                uriString = savedInstanceState.getString("uri", null);
+            }
             if(uriString == null)
             {
                 throw new UnsupportedOperationException("Activity was started with no uri in the intent extras!");

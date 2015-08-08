@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -71,7 +72,8 @@ public class MainActivity extends ActionBarActivity {
 
                     Intent intent = new Intent(MainActivity.this, DisplayPostsActivity.class);
                     intent.putExtra("journal name", m_Text);
-                    intent.putExtra("uri", uri);
+                    intent.putExtra("uri", uri.toString());
+
                     startActivity(intent);
                 }
             });

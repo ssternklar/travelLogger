@@ -31,7 +31,9 @@ public class TravelContentProvider extends ContentProvider {
 
         matcher.addURI(auth, TravelContract.PATH_JOURNAL, JOURNAL);
         matcher.addURI(auth, TravelContract.PATH_ENTRY + "/#", ENTRY);
+        matcher.addURI(auth, TravelContract.PATH_ENTRY + "/#/#", ENTRY);
         matcher.addURI(auth, TravelContract.PATH_ENTRY + "/*", ENTRY_BY_JOURNAL);
+        matcher.addURI(auth, TravelContract.PATH_ENTRY + "/*/#", ENTRY_BY_JOURNAL);
 
         return matcher;
     }
@@ -127,7 +129,8 @@ public class TravelContentProvider extends ContentProvider {
                 dbID = db.insert(EntryEntry.TABLE_NAME, null, values);
                 if(dbID > 0)
                 {
-                    ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(dbID)).build();
+                    values.put(EntryEntry.COLUMN_ID, dbID);
+                    ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(value)).appendPath(Long.toString(dbID)).build();
                 }
                 else throw new android.database.SQLException("Failed to insert row into uri: " + uri);
                 break;
@@ -139,7 +142,7 @@ public class TravelContentProvider extends ContentProvider {
                     dbID = db.insert(EntryEntry.TABLE_NAME, null, values);
                     if (dbID > 0) {
                         String journalName = uri.getPathSegments().get(1);
-                        ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(journalName).build();
+                        ret = EntryEntry.CONTENT_URI.buildUpon().appendPath(journalName).appendPath(Long.toString(dbID)).build();
                     }
                     else throw new android.database.SQLException("Failed to insert row into uri: " + uri);
                     cursor.close();
