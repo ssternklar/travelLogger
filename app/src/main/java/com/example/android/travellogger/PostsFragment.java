@@ -1,5 +1,8 @@
 package com.example.android.travellogger;
 
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,9 +15,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.android.travellogger.provider.PostsAdapter;
@@ -29,10 +34,11 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private ListView listView;
     private int mPosition = ListView.INVALID_POSITION;
+    private String m_Text;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //menu.clear();
+        menu.clear();
         inflater.inflate(R.menu.menu_display_posts, menu);
         super.onCreateOptionsMenu(menu,inflater);
     }
@@ -58,6 +64,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if(MainActivity.ismTwoPane()) {
+            getActivity().setTitle("Posts");
             setHasOptionsMenu(true);
         }
         //return inflater.inflate(R.layout.fragment_main, container, false);
@@ -112,6 +119,44 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
         return rootView;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.action_add_new_post) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("New Post Title:");
+            final EditText input = new EditText(getActivity());
+            builder.setView(input);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_Text = input.getText().toString();
+
+                    ContentValues values = new ContentValues();
+                    values.put(TravelContract.EntryEntry.COLUMN_TITLE, m_Text);
+                    Uri uri = Uri.parse(getActivity().getIntent().getStringExtra("uri"));
+
+                    Uri newUri = getActivity().getContentResolver().insert(uri, values);
+                    getActivity().getContentResolver().notifyChange(uri, null);
+
+                    Intent intent = new Intent(getActivity(), CreatePostActivity.class);
+                    intent.putExtra("post name", m_Text);
+                    intent.putExtra("uri", newUri.toString());
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

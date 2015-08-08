@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +23,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if(findViewById(R.id.detail_container) != null) {
@@ -30,6 +33,24 @@ public class MainActivity extends ActionBarActivity {
 //                        .replace(R.id.detail_container, new DetailActivityFragment(), "DF")
 //                        .commit();
 //            }
+            getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+
+                @Override
+                public void onBackStackChanged() {
+                    Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment);
+                    if (f != null){
+                        String fragClassName = f.getClass().getName();
+
+                        if (fragClassName.equals(JournalsFragment.class.getName())){
+                            setTitle ("Journals");
+                            //set selected item position, etc
+                        } else if (fragClassName.equals(PostsFragment.class.getName())) {
+                            setTitle("Posts");
+                        }
+                    }
+
+                }
+            });
         } else {
             mTwoPane = false;
         }
@@ -92,4 +113,6 @@ public class MainActivity extends ActionBarActivity {
     public static boolean ismTwoPane() {
         return mTwoPane;
     }
+
+
 }
