@@ -1,9 +1,16 @@
 package com.example.android.travellogger;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
 
 
 public class DetailActivity extends ActionBarActivity {
@@ -50,6 +57,35 @@ public class DetailActivity extends ActionBarActivity {
 //
 //            startActivityForResult(shareIntent, 0);
 //        }
+
+        /*if(id == R.id.Google)
+        {
+
+        AccountManager manager = AccountManager.get(this);
+        Account[] list = manager.getAccounts();
+        final ArrayList<String> accounts = new ArrayList<String>();
+        final String messageString = "test";
+        for(Account account : list)
+        {
+            if(account.type.equalsIgnoreCase("com.google"))
+            {
+                accounts.add(account.name);
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Choose account:")
+                .setItems((String[])accounts.toArray(), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new PostGPlusTask().execute(
+                                messageString,
+                                accounts.get(which)
+                        );
+                    }
+                });
+
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
