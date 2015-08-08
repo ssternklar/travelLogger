@@ -52,14 +52,17 @@ public class DisplayPostsActivity extends ActionBarActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     m_Text = input.getText().toString();
-                    /*Intent intent = new Intent(DisplayPostsActivity.this, CreatePostActivity.class);
-                    intent.putExtra("post name", m_Text);
-                    startActivity(intent);*/
+
                     ContentValues values = new ContentValues();
                     values.put(TravelContract.EntryEntry.COLUMN_TITLE, m_Text);
                     Uri uri = Uri.parse(getIntent().getStringExtra("uri"));
+
                     getContentResolver().insert(uri, values);
                     getContentResolver().notifyChange(uri, null);
+
+                    Intent intent = new Intent(DisplayPostsActivity.this, CreatePostActivity.class);
+                    intent.putExtra("post name", m_Text);
+                    startActivity(intent);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

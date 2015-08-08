@@ -108,7 +108,11 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         String uriString = getActivity().getIntent().getStringExtra("uri");
         if(uriString == null)
         {
-            throw new UnsupportedOperationException("Activity was started with no uri in the intent extras!");
+            uriString = savedInstanceState.getString("uri");
+            if(uriString == null)
+            {
+                throw new UnsupportedOperationException("Activity was started with no uri in the intent extras!");
+            }
         }
 
         uri = Uri.parse(uriString);
@@ -126,11 +130,13 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     public Loader<Cursor> onCreateLoader(int i, Bundle b)
     {
         String sortOrder = TravelContract.JournalEntry.COLUMN_ID + " DESC";
+        String[] selectionArgs = { uri.getPathSegments().get(1) };
+        Log.d("TEST", uri.getPathSegments().get(1));
         return new CursorLoader(getActivity(),
                 uri,
                 DB_ROWS,
-                null,
-                null,
+                TravelContract.EntryEntry.COLUMN_JOURNAL_ID + " = ?",
+                selectionArgs,
                 sortOrder);
     }
 

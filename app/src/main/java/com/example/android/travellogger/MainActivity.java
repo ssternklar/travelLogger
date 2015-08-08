@@ -3,6 +3,8 @@ package com.example.android.travellogger;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -61,13 +63,16 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     m_Text = input.getText().toString();
-                    /*Intent intent = new Intent(MainActivity.this, DisplayPostsActivity.class);
-                    intent.putExtra("journal name", m_Text);
-                    startActivity(intent);*/
+
                     ContentValues values = new ContentValues();
                     values.put(TravelContract.JournalEntry.COLUMN_NAME, m_Text);
-                    getContentResolver().insert(TravelContract.JournalEntry.CONTENT_URI, values);
+                    Uri uri = getContentResolver().insert(TravelContract.JournalEntry.CONTENT_URI, values);
                     getContentResolver().notifyChange(TravelContract.JournalEntry.CONTENT_URI, null);
+
+                    Intent intent = new Intent(MainActivity.this, DisplayPostsActivity.class);
+                    intent.putExtra("journal name", m_Text);
+                    intent.putExtra("uri", uri);
+                    startActivity(intent);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

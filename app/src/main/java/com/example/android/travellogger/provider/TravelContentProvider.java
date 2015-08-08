@@ -145,7 +145,7 @@ public class TravelContentProvider extends ContentProvider {
                     cursor.close();
                 }
                 else{
-                    throw new UnsupportedOperationException("Entry attempted to access an uncreated journal");
+                    throw new UnsupportedOperationException("Entry attempted to access an uncreated journal: " + uri);
                 }
                 break;
             default:

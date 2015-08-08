@@ -22,6 +22,7 @@ import java.io.IOException;
 public class CreatePostActivityFragment extends Fragment {
     private int PICK_IMAGE_REQUEST = 1;
     View rootView;
+    String imageLoc = null;
 
     public CreatePostActivityFragment() {
     }
@@ -50,6 +51,7 @@ public class CreatePostActivityFragment extends Fragment {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
 
             Uri uri = data.getData();
+            imageLoc = uri.toString();
 
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
