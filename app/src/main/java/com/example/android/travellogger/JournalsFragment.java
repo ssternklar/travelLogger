@@ -2,6 +2,7 @@ package com.example.android.travellogger;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -67,15 +68,24 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 mPosition = position;
                 if(cursor != null) {
-                    Intent intent = new Intent(getActivity(), DisplayPostsActivity.class);
-                    intent.putExtra("uri", TravelContract.EntryEntry.CONTENT_URI.buildUpon()
+
+                    String string = TravelContract.EntryEntry.CONTENT_URI.buildUpon()
                             .appendPath(Integer.toString(cursor.getInt(COL_JOURNAL_ID)))
-                            .build().toString());
+                            .build().toString();
+
                     //on click, we need to replace the fragment from main activity with
                     //the list of posts.
                     if(getActivity().findViewById(R.id.detail_container) == null) {
+                        Intent intent = new Intent(getActivity(), DisplayPostsActivity.class);
+                        intent.putExtra("uri", string);
                         startActivity(intent);
                     } else {
+
+                        PostsFragment fragment = new PostsFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("uri", string);
+                        fragment.setArguments(bundle);
+
                         getActivity().getSupportFragmentManager().beginTransaction()
                                 .addToBackStack(null)
                                 .replace(R.id.fragment, new PostsFragment())

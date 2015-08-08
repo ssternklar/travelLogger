@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -118,8 +119,10 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         String uriString = getActivity().getIntent().getStringExtra("uri");
         if(uriString == null)
         {
-            if(savedInstanceState != null) {
-                uriString = savedInstanceState.getString("uri", null);
+            Bundle bundle = this.getArguments();
+            if(bundle != null) {
+                Log.d("TEST", "test2");
+                uriString = bundle.getString("uri", null);
             }
             if(uriString == null)
             {
