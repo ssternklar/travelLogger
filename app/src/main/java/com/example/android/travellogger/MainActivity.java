@@ -44,8 +44,8 @@ public class MainActivity extends ActionBarActivity {
                         if (fragClassName.equals(JournalsFragment.class.getName())){
                             setTitle ("Journals");
                             //set selected item position, etc
-                        } else if (fragClassName.equals(PostsFragment.class.getName())) {
-                            setTitle("Posts");
+//                        } else if (fragClassName.equals(PostsFragment.class.getName())) {
+//                            setTitle("Posts");
                         }
                     }
 

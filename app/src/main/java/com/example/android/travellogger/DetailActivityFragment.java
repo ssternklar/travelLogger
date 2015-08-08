@@ -3,7 +3,6 @@ package com.example.android.travellogger;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -66,7 +65,7 @@ public class DetailActivityFragment extends Fragment {
             Uri uri = Uri.parse(uriString);
             Cursor cursor = getActivity().getContentResolver().query(uri,
                     PostsFragment.DB_ROWS,
-                    TravelContract.EntryEntry.COLUMN_ID +" = ?",
+                    TravelContract.EntryEntry.COLUMN_ID + " = ?",
                     new String[]{uri.getPathSegments().get(2)},
                     null);
             if(cursor.moveToFirst()) {
@@ -87,7 +86,7 @@ public class DetailActivityFragment extends Fragment {
                     }
                 }
 
-
+            if(!MainActivity.ismTwoPane())
                 getActivity().setTitle(postTitle);
 
                 titleTextView.setText(text);

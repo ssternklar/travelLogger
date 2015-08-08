@@ -35,6 +35,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     private ListView listView;
     private int mPosition = ListView.INVALID_POSITION;
     private String m_Text;
+    private String mUri;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -135,7 +136,12 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
 
                     ContentValues values = new ContentValues();
                     values.put(TravelContract.EntryEntry.COLUMN_TITLE, m_Text);
-                    Uri uri = Uri.parse(getActivity().getIntent().getStringExtra("uri"));
+                    Uri uri;
+                    if (!MainActivity.ismTwoPane()) {
+                        uri = Uri.parse(getActivity().getIntent().getStringExtra("uri"));
+                    } else {
+                        uri = Uri.parse(mUri);
+                    }
 
                     Uri newUri = getActivity().getContentResolver().insert(uri, values);
                     getActivity().getContentResolver().notifyChange(uri, null);
@@ -176,6 +182,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             if(bundle != null) {
                 Log.d("TEST", "test2");
                 uriString = bundle.getString("uri", null);
+                mUri = uriString;
             }
             if(uriString == null)
             {
