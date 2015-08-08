@@ -45,54 +45,61 @@ public class DetailActivityFragment extends Fragment {
         imageView = (ImageView)rootView.findViewById(R.id.detail_image_view);
         intent = getActivity().getIntent();
 
+        init();
 
         return rootView;
     }
 
     public void init()
     {
-        Uri uri;
+        String uriString;
         boolean mTwoPane = MainActivity.ismTwoPane();
         if (!mTwoPane) {
-            uri = Uri.parse(intent.getStringExtra("uri"));
+            uriString = intent.getStringExtra("uri");
         } else {
             Bundle bundle=this.getArguments();
-            uri = Uri.parse(bundle.getString("Uri"));
+            uriString = bundle.getString("uri", null);
         }
 
-        Cursor cursor = getActivity().getContentResolver().query(uri,
-                PostsFragment.DB_ROWS,
-                TravelContract.EntryEntry.COLUMN_ID +" = ?",
-                new String[]{uri.getPathSegments().get(2)},
-                null);
-        if(cursor.moveToFirst()) {
-            String postTitle = cursor.getString(1);
-
-            String text = cursor.getString(2);
-
-            String imageUriString = cursor.getString(5);
-
-
-            if(imageUriString != null) {
-                Uri imageUri = Uri.parse(imageUriString);
-                try {
-                    Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
-                    imageView.setImageBitmap(bmp);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            getActivity().setTitle(postTitle);
-
-            titleTextView.setText(text);
-
-
-        }
-        else
+        if(uriString != null)
         {
-            titleTextView.setText("Something went horribly wrong, please contact the developers and let them know you got this!!");
+            Uri uri = Uri.parse(uriString);
+            Cursor cursor = getActivity().getContentResolver().query(uri,
+                    PostsFragment.DB_ROWS,
+                    TravelContract.EntryEntry.COLUMN_ID +" = ?",
+                    new String[]{uri.getPathSegments().get(2)},
+                    null);
+            if(cursor.moveToFirst()) {
+                String postTitle = cursor.getString(1);
+
+                String text = cursor.getString(2);
+
+                String imageUriString = cursor.getString(5);
+
+
+                if (imageUriString != null) {
+                    Uri imageUri = Uri.parse(imageUriString);
+                    try {
+                        Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                        imageView.setImageBitmap(bmp);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                getActivity().setTitle(postTitle);
+
+                titleTextView.setText(text);
+            }
+            cursor.close();
+
+        }
+        else {
+            if (mTwoPane) {
+                titleTextView.setText("Something went horribly wrong, please contact the developers and let them know you got this!!");
+
+            }
         }
     }
 
