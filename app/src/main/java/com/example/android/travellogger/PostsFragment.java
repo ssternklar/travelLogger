@@ -10,18 +10,15 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.android.travellogger.provider.PostsAdapter;
 import com.example.android.travellogger.provider.TravelContract;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -32,6 +29,12 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private ListView listView;
     private int mPosition = ListView.INVALID_POSITION;
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_display_posts, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
 
     private static String[] DB_ROWS = {
         TravelContract.EntryEntry.COLUMN_ID,
@@ -53,6 +56,9 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if(MainActivity.ismTwoPane()) {
+            setHasOptionsMenu(true);
+        }
         //return inflater.inflate(R.layout.fragment_main, container, false);
         /*String[] data = {
                 "Post 1 Title",
@@ -78,8 +84,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
                 mPosition = position;
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 String data = null;
-                if(cursor != null)
-                {
+                if (cursor != null) {
                     data = cursor.getString(COL_TITLE);
                 }
 
@@ -131,7 +136,6 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     {
         String sortOrder = TravelContract.JournalEntry.COLUMN_ID + " DESC";
         String[] selectionArgs = { uri.getPathSegments().get(1) };
-        Log.d("TEST", uri.getPathSegments().get(1));
         return new CursorLoader(getActivity(),
                 uri,
                 DB_ROWS,
@@ -141,11 +145,9 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data)
-    {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mPostsAdapter.swapCursor(data);
-        if(mPosition != ListView.INVALID_POSITION)
-        {
+        if (listView != null && mPosition != ListView.INVALID_POSITION) {
             listView.smoothScrollToPosition(mPosition);
         }
     }

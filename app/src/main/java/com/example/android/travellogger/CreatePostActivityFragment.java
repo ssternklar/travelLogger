@@ -64,7 +64,4 @@ public class CreatePostActivityFragment extends Fragment {
             }
         }
     }
-
-
-
 }
