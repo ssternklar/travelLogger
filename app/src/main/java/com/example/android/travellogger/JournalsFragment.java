@@ -85,10 +85,10 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
                         Bundle bundle = new Bundle();
                         bundle.putString("uri", string);
                         fragment.setArguments(bundle);
-
+                        Log.d("TEST", "args set");
                         getActivity().getSupportFragmentManager().beginTransaction()
                                 .addToBackStack(null)
-                                .replace(R.id.fragment, new PostsFragment())
+                                .replace(R.id.fragment, fragment)
                                 .commit();
                     }
                 }
