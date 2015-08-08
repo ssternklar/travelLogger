@@ -3,6 +3,7 @@ package com.example.android.travellogger;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,6 +28,10 @@ import com.example.android.travellogger.provider.TravelContract;
  */
 public class DetailActivityFragment extends Fragment {
 
+    Intent intent;
+    TextView titleTextView;
+    ImageView imageView;
+
     public DetailActivityFragment() {
         setHasOptionsMenu(true);
     }
@@ -36,10 +41,16 @@ public class DetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        TextView titleTextView = (TextView) rootView.findViewById(R.id.detail_text);
-        ImageView imageView = (ImageView)rootView.findViewById(R.id.detail_image_view);
-        Intent intent = getActivity().getIntent();
+        titleTextView = (TextView) rootView.findViewById(R.id.detail_text);
+        imageView = (ImageView)rootView.findViewById(R.id.detail_image_view);
+        intent = getActivity().getIntent();
 
+
+        return rootView;
+    }
+
+    public void init()
+    {
         Uri uri;
         boolean mTwoPane = MainActivity.ismTwoPane();
         if (!mTwoPane) {
@@ -83,7 +94,6 @@ public class DetailActivityFragment extends Fragment {
         {
             titleTextView.setText("Something went horribly wrong, please contact the developers and let them know you got this!!");
         }
-        return rootView;
     }
 
     @Override
