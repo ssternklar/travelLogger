@@ -73,6 +73,7 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
                         Bundle bundle = new Bundle();
                         bundle.putString("uri", string);
                         fragment.setArguments(bundle);
+
                         getActivity().getSupportFragmentManager().beginTransaction()
                                 .addToBackStack(null)
                                 .replace(R.id.fragment, fragment)
@@ -119,11 +120,5 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
         mJournalsAdapter.swapCursor(null);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Set title
-        getActivity().setTitle("Journals");
-    }
 
 }

@@ -161,6 +161,14 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+
+        StartLoader();
+
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    public void StartLoader()
+    {
         String uriString = getActivity().getIntent().getStringExtra("uri");
         if(uriString == null)
         {
@@ -183,7 +191,6 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         }
 
         getLoaderManager().initLoader(1, null, this);
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
