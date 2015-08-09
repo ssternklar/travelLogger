@@ -50,8 +50,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         TravelContract.EntryEntry.COLUMN_TEXT,
         TravelContract.EntryEntry.COLUMN_DATE,
         TravelContract.EntryEntry.COLUMN_JOURNAL_ID,
-        TravelContract.EntryEntry.COLUMN_IMAGE_CONTENT_PATH,
-        TravelContract.EntryEntry.COLUMN_ONLINE_ID
+        TravelContract.EntryEntry.COLUMN_IMAGE_CONTENT_PATH
     };
 
     public static int COL_TITLE = 1;

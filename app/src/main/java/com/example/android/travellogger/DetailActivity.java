@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
@@ -24,6 +23,7 @@ public class DetailActivity extends ActionBarActivity {
                     .add(R.id.detail_container, new DetailActivityFragment())
                     .commit();
         }
+
     }
 
 

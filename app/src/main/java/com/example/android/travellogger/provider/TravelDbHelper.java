@@ -12,7 +12,7 @@ import com.example.android.travellogger.provider.TravelContract.JournalEntry;
 public class TravelDbHelper extends SQLiteOpenHelper {
 
     //The version of our database. Do not change unless the database schema changes
-    private static final int DB_VER = 2;
+    private static final int DB_VER = 4;
 
     static final String DB_NAME = "travel.db";
 
@@ -26,7 +26,9 @@ public class TravelDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_JOURNAL_TABLE =
                 "CREATE TABLE " + JournalEntry.TABLE_NAME + " (" +
                         JournalEntry.COLUMN_ID + " INTEGER PRIMARY KEY," +
-                        JournalEntry.COLUMN_NAME + " TEXT NOT NULL );";
+                        JournalEntry.COLUMN_NAME + " TEXT NOT NULL," +
+                        JournalEntry.COLUMN_LOCK + " TEXT" +
+                        " );";
 
         final String SQL_CREATE_ENTRY_TABLE =
                 "CREATE TABLE " + EntryEntry.TABLE_NAME + " (" +
@@ -36,7 +38,6 @@ public class TravelDbHelper extends SQLiteOpenHelper {
                         EntryEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                         EntryEntry.COLUMN_TEXT + " TEXT, " +
                         EntryEntry.COLUMN_IMAGE_CONTENT_PATH + " TEXT, " +
-                        EntryEntry.COLUMN_ONLINE_ID + " INTEGER, " +
                         //Set up our foreign key stuff in case we need it
                         " FOREIGN KEY (" + EntryEntry.COLUMN_JOURNAL_ID + ") REFERENCES " +
                         JournalEntry.TABLE_NAME + " (" + JournalEntry.COLUMN_ID + "));";

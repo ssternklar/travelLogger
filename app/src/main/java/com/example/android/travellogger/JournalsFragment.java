@@ -1,16 +1,21 @@
 package com.example.android.travellogger;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.android.travellogger.provider.JournalAdapter;
@@ -28,7 +33,8 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
 
     private static final String[] DB_ROWS = {
             TravelContract.JournalEntry.COLUMN_ID,
-            TravelContract.JournalEntry.COLUMN_NAME
+            TravelContract.JournalEntry.COLUMN_NAME,
+            TravelContract.JournalEntry.COLUMN_LOCK
     };
 
     public static final int COL_JOURNAL_ID = 0;
@@ -51,39 +57,68 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+            public void onItemClick(AdapterView<?> parent, View view, final int position,
+                                    final long id) {
+                final Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 mPosition = position;
-                if(cursor != null) {
-
-                    String string = TravelContract.EntryEntry.CONTENT_URI.buildUpon()
-                            .appendPath(Integer.toString(cursor.getInt(COL_JOURNAL_ID)))
-                            .build().toString();
-
-                    //on click, we need to replace the fragment from main activity with
-                    //the list of posts.
-                    if(getActivity().findViewById(R.id.detail_container) == null) {
-                        Intent intent = new Intent(getActivity(), DisplayPostsActivity.class);
-                        intent.putExtra("uri", string);
-                        startActivity(intent);
-                    } else {
-
-                        PostsFragment fragment = new PostsFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("uri", string);
-                        fragment.setArguments(bundle);
-
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .addToBackStack(null)
-                                .replace(R.id.fragment, fragment)
-                                .commit();
+                if(cursor != null)
+                {
+                    final String s;
+                    if((s = cursor.getString(2)) == null)
+                    {
+                        GoToNextThing(cursor);
+                    }
+                    else
+                    {
+                        final EditText input = new EditText(getActivity());
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Enter Password:")
+                                .setView(input)
+                                .setNegativeButton("Cancel", null)
+                                .setPositiveButton("Unlock", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String text = input.getText().toString().trim();
+                                        if (text.equals(s.trim())) {
+                                            Log.d("Test", "yay");
+                                            GoToNextThing(cursor);
+                                        }
+                                    }
+                                }).show();
                     }
                 }
             }
         });
 
         return rootView;
+
+    }
+
+    public void GoToNextThing(Cursor cursor)
+    {
+
+            String string = TravelContract.EntryEntry.CONTENT_URI.buildUpon()
+                    .appendPath(Integer.toString(cursor.getInt(COL_JOURNAL_ID)))
+                    .build().toString();
+
+            //on click, we need to replace the fragment from main activity with
+            //the list of posts.
+            if(getActivity().findViewById(R.id.detail_container) == null) {
+                Intent intent = new Intent(getActivity(), DisplayPostsActivity.class);
+                intent.putExtra("uri", string);
+                startActivity(intent);
+            } else {
+
+                PostsFragment fragment = new PostsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("uri", string);
+                fragment.setArguments(bundle);
+
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.fragment, fragment)
+                        .commit();
+            }
 
     }
 

@@ -2,6 +2,7 @@ package com.example.android.travellogger;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -71,16 +72,20 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
         if(id == R.id.action_add_new_journal) {
+            final Context context = this;
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("New Journal Title:");
             final EditText input = new EditText(this);
             builder.setView(input);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     m_Text = input.getText().toString();
@@ -90,11 +95,25 @@ public class MainActivity extends ActionBarActivity {
                     Uri uri = getContentResolver().insert(TravelContract.JournalEntry.CONTENT_URI, values);
                     getContentResolver().notifyChange(TravelContract.JournalEntry.CONTENT_URI, null);
 
-                    Intent intent = new Intent(MainActivity.this, DisplayPostsActivity.class);
+                    /*Intent intent = new Intent(MainActivity.this, DisplayPostsActivity.class);
                     intent.putExtra("journal name", m_Text);
                     intent.putExtra("uri", uri.toString());
 
-                    startActivity(intent);
+                    startActivity(intent);*/
+                }
+            });
+            builder.setNeutralButton("Lock", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_Text = input.getText().toString();
+
+                    ContentValues values = new ContentValues();
+                    values.put(TravelContract.JournalEntry.COLUMN_NAME, m_Text);
+                    Uri uri = getContentResolver().insert(TravelContract.JournalEntry.CONTENT_URI, values);
+
+                    AddLockTask task = new AddLockTask();
+                    task.Setup(context);
+                    task.execute(Integer.parseInt(uri.getPathSegments().get(1)));
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
