@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -118,6 +120,51 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
                             .replace(R.id.detail_container, detail)
                             .commit();
                 }
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            final String[] options = {
+                    "Delete",
+                    "Change Name",
+            };
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                final long _id = id;
+                new AlertDialog.Builder(getActivity()).setTitle("Extra Options")
+                        .setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which)
+                                {
+                                    case 0:
+                                        getActivity().getContentResolver().delete(uri, TravelContract.EntryEntry.COLUMN_ID + " = " + _id, null);
+                                        break;
+                                    case 1:
+                                        final EditText input = new EditText(getActivity());
+                                        new AlertDialog.Builder(getActivity()).setTitle("Rename to:")
+                                                .setView(input)
+                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        ContentValues values = new ContentValues();
+                                                        values.put(TravelContract.EntryEntry.COLUMN_TITLE, input.getText().toString());
+                                                        getActivity().getContentResolver().update(uri, values, TravelContract.EntryEntry.COLUMN_ID + " = " + _id, null);
+                                                    }
+                                                }).setNegativeButton("Cancel", null)
+                                                .show();
+
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        })
+                        .show();
+                return true;
             }
         });
 

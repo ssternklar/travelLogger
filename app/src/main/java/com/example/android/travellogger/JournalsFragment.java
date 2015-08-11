@@ -1,6 +1,7 @@
 package com.example.android.travellogger;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.android.travellogger.provider.JournalAdapter;
+import com.example.android.travellogger.provider.TravelContentProvider;
 import com.example.android.travellogger.provider.TravelContract;
 
 
@@ -59,15 +62,11 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
                                     final long id) {
                 final Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 mPosition = position;
-                if(cursor != null)
-                {
+                if (cursor != null) {
                     final String s;
-                    if((s = cursor.getString(2)) == null)
-                    {
-                        GoToNextThing(cursor);
-                    }
-                    else
-                    {
+                    if ((s = cursor.getString(2)) == null) {
+                        GoToNextThing(id);
+                    } else {
                         final EditText input = new EditText(getActivity());
                         new AlertDialog.Builder(getActivity())
                                 .setTitle("Enter Password:")
@@ -78,13 +77,76 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
                                     public void onClick(DialogInterface dialog, int which) {
                                         String text = input.getText().toString().trim();
                                         if (text.equals(s.trim())) {
-                                            Log.d("Test", "yay");
-                                            GoToNextThing(cursor);
+                                            GoToNextThing(id);
                                         }
                                     }
                                 }).show();
                     }
                 }
+            }
+        });
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            final String[] options = {
+                    "Delete",
+                    "Change Name",
+                    "Change Lock"
+            };
+
+            @Override
+            public boolean onItemLongClick(final AdapterView<?> parent, View view, final int position, long id) {
+                final long _id = id;
+                new AlertDialog.Builder(getActivity()).setTitle("Extra Options")
+                        .setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                final EditText input = new EditText(getActivity());
+                                switch (which)
+                                {
+                                    case 0:
+                                        TravelContentProvider.SafeDeleteJournal(getActivity().getContentResolver(), ((Cursor)parent.getItemAtPosition(position)).getString(1));
+                                        break;
+                                    case 1:
+                                        new AlertDialog.Builder(getActivity()).setTitle("Rename to:")
+                                                .setView(input)
+                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        ContentValues values = new ContentValues();
+                                                        values.put(TravelContract.JournalEntry.COLUMN_NAME, input.getText().toString());
+                                                        getActivity().getContentResolver().update(TravelContract.JournalEntry.CONTENT_URI, values, TravelContract.JournalEntry.COLUMN_ID + " = " + _id, null);
+                                                    }
+                                                }).setNegativeButton("Cancel", null)
+                                                .show();
+                                        break;
+                                    case 2:
+                                        Cursor cursor = (Cursor)parent.getItemAtPosition(position);
+                                        final String s;
+                                        if ((s = cursor.getString(2)) == null) {
+                                            ChangePassword(_id);
+                                        } else {
+                                            new AlertDialog.Builder(getActivity())
+                                                    .setTitle("Enter Password:")
+                                                    .setView(input)
+                                                    .setNegativeButton("Cancel", null)
+                                                    .setPositiveButton("Unlock", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            String text = input.getText().toString().trim();
+                                                            if (text.equals(s.trim())) {
+                                                                ChangePassword(_id);
+                                                            }
+                                                        }
+                                                    }).show();
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        })
+                        .show();
+                return true;
             }
         });
 
@@ -97,13 +159,18 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
 
     }
 
-    public void GoToNextThing(Cursor cursor)
+    public void ChangePassword(long id)
+    {
+        MainActivity activity = ((MainActivity)getActivity());
+        activity.LockJournal(id);
+    }
+
+    public void GoToNextThing(long id)
     {
 
             String string = TravelContract.EntryEntry.CONTENT_URI.buildUpon()
-                    .appendPath(Integer.toString(cursor.getInt(COL_JOURNAL_ID)))
+                    .appendPath(Long.toString(id))
                     .build().toString();
-
             //on click, we need to replace the fragment from main activity with
             //the list of posts.
             if(getActivity().findViewById(R.id.detail_container) == null) {

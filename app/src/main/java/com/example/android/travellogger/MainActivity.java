@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -111,10 +112,8 @@ public class MainActivity extends ActionBarActivity {
                     ContentValues values = new ContentValues();
                     values.put(TravelContract.JournalEntry.COLUMN_NAME, m_Text);
                     Uri uri = getContentResolver().insert(TravelContract.JournalEntry.CONTENT_URI, values);
+                    LockJournal(Integer.parseInt(uri.getPathSegments().get(1)));
 
-                    AddLockTask task = new AddLockTask(context);
-                    task.execute(Integer.parseInt(uri.getPathSegments().get(1)));
-                    tasks.add(task);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -147,5 +146,13 @@ public class MainActivity extends ActionBarActivity {
             tasks.remove(0);
         }
         super.onPause();
+    }
+
+    public void LockJournal(long id)
+    {
+
+        AddLockTask task = new AddLockTask(this);
+        task.execute((int)id);
+        tasks.add(task);
     }
 }
