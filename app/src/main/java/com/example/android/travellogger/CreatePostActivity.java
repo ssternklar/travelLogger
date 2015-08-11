@@ -38,8 +38,9 @@ public class CreatePostActivity extends ActionBarActivity {
             return true;
         }
         if (id == R.id.action_save_post) {
-            CreatePostActivityFragment fragment = (CreatePostActivityFragment)getSupportFragmentManager().findFragmentById(R.id.createpostfragment);
-            fragment.saveStuff();
+//            CreatePostActivityFragment fragment = (CreatePostActivityFragment)getSupportFragmentManager().findFragmentById(R.id.createpostfragment);
+//            fragment.onStop();
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

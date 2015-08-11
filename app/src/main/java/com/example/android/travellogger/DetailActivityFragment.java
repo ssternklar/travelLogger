@@ -128,9 +128,9 @@ public class DetailActivityFragment extends Fragment {
     private Intent createShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
 //        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        shareIntent.setType("text/plain");
+        shareIntent.setType("images/*");
         shareIntent.putExtra(Intent.EXTRA_TEXT,
-                "Test String!");
+                titleTextView.getText().toString());
         return shareIntent;
     }
 }

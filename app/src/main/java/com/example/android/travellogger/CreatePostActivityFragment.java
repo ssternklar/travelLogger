@@ -168,7 +168,8 @@ public class CreatePostActivityFragment extends Fragment {
         }
     }
 
-    public void saveStuff()
+    @Override
+    public void onStop()
     {
         ContentValues values = new ContentValues();
         values.put(TravelContract.EntryEntry.COLUMN_TEXT, textBox.getText().toString());
@@ -185,6 +186,6 @@ public class CreatePostActivityFragment extends Fragment {
                 values,
                 TravelContract.EntryEntry.COLUMN_ID + " = ?",
                 new String[] {id});
-
+        super.onStop();
     }
 }
