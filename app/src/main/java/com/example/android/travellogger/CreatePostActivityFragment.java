@@ -111,6 +111,7 @@ public class CreatePostActivityFragment extends Fragment {
 
                 LoadImage(cursor.getString(1));
             }
+            cursor.close();
         }
         return rootView;
     }
