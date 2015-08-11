@@ -96,6 +96,8 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
                     data = cursor.getString(COL_TITLE);
                 }
 
+                //If we got here without a valid id, I want this to throw an exception
+                //It should never happen!!!
                 String idString = Long.toString(cursor.getLong(0));
                 Uri newUri = uri.buildUpon().appendPath(idString).build();
 
@@ -118,6 +120,12 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
                 }
             }
         });
+
+        if(savedInstanceState != null && savedInstanceState.containsKey("mPosition"))
+        {
+            mPosition = savedInstanceState.getInt("mPosition");
+        }
+
         return rootView;
     }
     @Override
@@ -167,6 +175,11 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
+        if(savedInstanceState != null)
+        {
+            mUri = savedInstanceState.getString("uri");
+        }
+
         StartLoader();
 
         super.onActivityCreated(savedInstanceState);
@@ -174,19 +187,27 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     public void StartLoader()
     {
-        String uriString = getActivity().getIntent().getStringExtra("uri");
-        if(uriString == null)
-        {
-            Bundle bundle = this.getArguments();
-            if(bundle != null) {
-                Log.d("TEST", "test2");
-                uriString = bundle.getString("uri", null);
+
+        String uriString;
+        if(mUri == null) {
+            uriString = getActivity().getIntent().getStringExtra("uri");
+            if (uriString == null) {
+                Bundle bundle = this.getArguments();
+                if (bundle != null) {
+                    Log.d("TEST", "test2");
+                    uriString = bundle.getString("uri", null);
+                    mUri = uriString;
+                }
+                if (uriString == null) {
+                    throw new UnsupportedOperationException("Activity was started with no uri in the intent extras!");
+                }
+            } else {
                 mUri = uriString;
             }
-            if(uriString == null)
-            {
-                throw new UnsupportedOperationException("Activity was started with no uri in the intent extras!");
-            }
+        }
+        else
+        {
+            uriString = mUri;
         }
 
         uri = Uri.parse(uriString);
@@ -223,5 +244,15 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mPostsAdapter.swapCursor(null);
+    }
+
+
+    public void onSaveInstanceState(Bundle outBundle)
+    {
+        outBundle.putString("uri", mUri);
+        if(mPosition != ListView.INVALID_POSITION) {
+            outBundle.putInt("mPosition", mPosition);
+        }
+        super.onSaveInstanceState(outBundle);
     }
 }

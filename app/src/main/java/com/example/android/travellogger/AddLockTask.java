@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.android.travellogger.provider.TravelContract;
 
@@ -20,11 +21,14 @@ import java.net.URL;
  */
 public class AddLockTask extends AsyncTask<Integer, Void, String>
     {
-        int id;
 
+        public boolean isFinished = false;
+        int id;
         Context myContext;
 
-        public void Setup(Context context) {
+        public AddLockTask(Context context)
+        {
+            super();
             myContext = context;
         }
 
@@ -32,7 +36,8 @@ public class AddLockTask extends AsyncTask<Integer, Void, String>
         protected String doInBackground(Integer... params) {
 
             if(myContext == null) {
-                Log.e("AddLockTask", "Setup was not called on this Task!");
+                Log.e("AddLockTask", "Context does not exist!");
+                return null;
             }
 
             id = params[0];
@@ -47,6 +52,8 @@ public class AddLockTask extends AsyncTask<Integer, Void, String>
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
+
+
 
                 InputStream inputStream = urlConnection.getInputStream();
 
@@ -105,10 +112,17 @@ public class AddLockTask extends AsyncTask<Integer, Void, String>
         @Override
         protected void onPostExecute(String ret)
         {
-            new AlertDialog.Builder(myContext).setTitle("Journal ID:")
-                    .setMessage("The password for this journal is: " + ret)
-                    .setPositiveButton("OK", null)
-                    .show();
+            if(ret != null && !ret.equals("")) {
+                new AlertDialog.Builder(myContext).setTitle("Journal ID:")
+                        .setMessage("The password for this journal is: " + ret)
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+            else
+            {
+                Toast.makeText(myContext, "Locking failed! Please try again later", Toast.LENGTH_SHORT).show();
+            }
+            isFinished = true;
         }
     }
 

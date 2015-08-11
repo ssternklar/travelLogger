@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,12 +32,12 @@ public class CreatePostActivityFragment extends Fragment {
             TravelContract.EntryEntry.COLUMN_DATE
     };
 
+    String uriString;
     private int PICK_IMAGE_REQUEST = 1;
     View rootView;
     String imageLoc = null;
     EditText textBox;
     ImageView imageView;
-    long date;
     String id = null;
 
     public CreatePostActivityFragment() {
@@ -64,55 +63,75 @@ public class CreatePostActivityFragment extends Fragment {
         });
 
         Intent intent = getActivity().getIntent();
-        String uriString = intent.getStringExtra("uri");
+        uriString = intent.getStringExtra("uri");
         if(uriString == null)
         {
-            if(savedInstanceState != null) {
-                uriString = savedInstanceState.getString("uri", null);
+            if(getArguments() != null) {
+                uriString = getArguments().getString("uri", null);
             }
             if(uriString == null)
             {
-                throw new UnsupportedOperationException("Activity was started with no uri in the intent extras!");
+                if(savedInstanceState != null)
+                {
+                    uriString = savedInstanceState.getString("uri", null);
+                }
+                if(uriString == null) {
+                    throw new UnsupportedOperationException("Activity was started with no uri!");
+                }
             }
         }
 
         Uri uri = Uri.parse(uriString);
         id = uri.getPathSegments().get(2);
-        Log.d("TEST", uri.toString());
 
-        Cursor cursor = getActivity().getContentResolver().query(
-                uri,
-                projection,
-                TravelContract.EntryEntry.COLUMN_ID + " = ?",
-                new String[] {id},
-                null
-        );
-
-
-
-        if(cursor.moveToFirst())
+        if(savedInstanceState != null)
         {
-            String text = cursor.getString(0);
-            textBox.setText(text);
-
-            try {
-
-                String imageContentPath = cursor.getString(1);
-                if(imageContentPath != null) {
-                    Uri imageUri = Uri.parse(imageContentPath);
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
-                    imageView.setImageBitmap(bitmap);
-                }
-            }
-            catch (Exception e)
+            if(savedInstanceState.containsKey("imageLoc"))
             {
-                //Just throw it away and forget the operation if we can't get it
+                LoadImage(savedInstanceState.getString("imageLoc"));
             }
-
-            date = cursor.getLong(0);
+            if(savedInstanceState.containsKey("textBox"))
+            {
+                textBox.setText(savedInstanceState.getString("textBox"));
+            }
         }
+        else {
 
+            Cursor cursor = getActivity().getContentResolver().query(
+                    uri,
+                    projection,
+                    TravelContract.EntryEntry.COLUMN_ID + " = ?",
+                    new String[]{id},
+                    null
+            );
+
+            if (cursor.moveToFirst()) {
+                String text = cursor.getString(0);
+                textBox.setText(text);
+
+                LoadImage(cursor.getString(1));
+            }
+            cursor.close();
+        }
         return rootView;
+    }
+
+    void LoadImage(String path)
+    {
+        try {
+
+            String imageContentPath = path;
+            if(imageContentPath != null) {
+                Uri imageUri = Uri.parse(imageContentPath);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                imageView.setImageBitmap(bitmap);
+            }
+        }
+        catch (Exception e)
+        {
+            //Just throw it away and forget the operation if we can't get it.
+            //It means that there is no image linked to the imageContentPath, or it's been deleted, or something like that
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -134,6 +153,20 @@ public class CreatePostActivityFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outBundle)
+    {
+        outBundle.putString("uri", uriString);
+        if(imageLoc != null)
+        {
+            outBundle.putString("imageLoc", imageLoc);
+        }
+        if(textBox.getText() != null)
+        {
+            outBundle.putString("textBox", textBox.getText().toString());
+        }
+    }
 
     public void saveStuff()
     {

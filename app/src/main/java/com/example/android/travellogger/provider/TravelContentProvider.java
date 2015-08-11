@@ -154,6 +154,7 @@ public class TravelContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown URI detected: " + uri);
         }
+        getContext().getContentResolver().notifyChange(uri,null);
         return ret;
     }
 

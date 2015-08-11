@@ -53,7 +53,6 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
         mListView = (ListView) rootView.findViewById(R.id.listview_journal);
         mListView.setAdapter(mJournalsAdapter);
 
-
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position,
@@ -88,6 +87,11 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             }
         });
+
+        if(savedInstanceState != null && savedInstanceState.containsKey("mPosition"))
+        {
+            mPosition = savedInstanceState.getInt("mPosition");
+        }
 
         return rootView;
 
@@ -147,6 +151,14 @@ public class JournalsFragment extends Fragment implements LoaderManager.LoaderCa
         {
             mListView.smoothScrollToPosition(mPosition);
         }
+    }
+
+    public void onSaveInstanceState(Bundle outBundle)
+    {
+        if(mPosition != ListView.INVALID_POSITION) {
+            outBundle.putInt("mPosition", mPosition);
+        }
+        super.onSaveInstanceState(outBundle);
     }
 
     @Override

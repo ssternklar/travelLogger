@@ -82,5 +82,4 @@ public class DetailActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }

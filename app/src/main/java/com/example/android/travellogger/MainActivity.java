@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,14 +13,19 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.android.travellogger.provider.TravelContract;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private String m_Text;
     private static boolean mTwoPane;
+    private ArrayList<AddLockTask> tasks = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +95,6 @@ public class MainActivity extends ActionBarActivity {
                     ContentValues values = new ContentValues();
                     values.put(TravelContract.JournalEntry.COLUMN_NAME, m_Text);
                     Uri uri = getContentResolver().insert(TravelContract.JournalEntry.CONTENT_URI, values);
-                    getContentResolver().notifyChange(TravelContract.JournalEntry.CONTENT_URI, null);
 
                     /*Intent intent = new Intent(MainActivity.this, DisplayPostsActivity.class);
                     intent.putExtra("journal name", m_Text);
@@ -107,9 +112,9 @@ public class MainActivity extends ActionBarActivity {
                     values.put(TravelContract.JournalEntry.COLUMN_NAME, m_Text);
                     Uri uri = getContentResolver().insert(TravelContract.JournalEntry.CONTENT_URI, values);
 
-                    AddLockTask task = new AddLockTask();
-                    task.Setup(context);
+                    AddLockTask task = new AddLockTask(context);
                     task.execute(Integer.parseInt(uri.getPathSegments().get(1)));
+                    tasks.add(task);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -129,5 +134,18 @@ public class MainActivity extends ActionBarActivity {
         return mTwoPane;
     }
 
-
+    @Override
+    public void onPause()
+    {
+        for(int i = tasks.size(); i > 0; i--)
+        {
+            AddLockTask task = tasks.get(0);
+            if(!task.isFinished) {
+                task.cancel(true);
+                Toast.makeText(getApplication(), "Failed to lock journal!", Toast.LENGTH_SHORT).show();
+            }
+            tasks.remove(0);
+        }
+        super.onPause();
+    }
 }
