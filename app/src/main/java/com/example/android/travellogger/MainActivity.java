@@ -5,10 +5,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +25,16 @@ public class MainActivity extends ActionBarActivity {
     private String m_Text;
     private static boolean mTwoPane;
     private ArrayList<AddLockTask> tasks = new ArrayList<>();
+
+    @Override
+    public void onStart() {
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setLogo(R.drawable.ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+        super.onStart();
+    }
 
 
     @Override
