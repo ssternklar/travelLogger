@@ -2,7 +2,6 @@ package com.example.android.travellogger.provider;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,8 @@ public class PostsAdapter extends CursorAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.list_item_post, parent, false);
         TextView textView = (TextView)view.findViewById(R.id.list_item_post_textview);
         textView.setText(cursor.getString(PostsFragment.COL_TITLE));
+        TextView dateView = (TextView)view.findViewById(R.id.list_item_date);
+        dateView.setText(cursor.getString(PostsFragment.COL_DATE));
         return view;
     }
 
@@ -32,6 +33,10 @@ public class PostsAdapter extends CursorAdapter {
     {
         TextView textView = (TextView)view.findViewById(R.id.list_item_post_textview);
         textView.setText(cursor.getString(PostsFragment.COL_TITLE));
+        String friendlyDate = TravelContract.formatDate(cursor.getLong(PostsFragment.COL_DATE));
+        TextView dateView = (TextView)view.findViewById(R.id.list_item_date);
+        dateView.setText(friendlyDate);
+
     }
 
 }

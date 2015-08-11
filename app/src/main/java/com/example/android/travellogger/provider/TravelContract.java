@@ -3,7 +3,8 @@ package com.example.android.travellogger.provider;
 import android.content.ContentResolver;
 import android.net.Uri;
 
-import org.apache.http.auth.AUTH;
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * Created by Sam on 7/22/2015.
@@ -26,6 +27,11 @@ public class TravelContract {
         //While I much dislike the use of the magic number
         //this will force the dates to the correct time
         return date - (date % 86400);
+    }
+
+    public static String formatDate(long dateInMilliseconds) {
+        Date date = new Date(dateInMilliseconds);
+        return DateFormat.getDateInstance().format(date);
     }
 
     //Gets the time of day from a UNIX-style timestamp

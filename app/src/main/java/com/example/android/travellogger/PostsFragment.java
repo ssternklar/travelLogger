@@ -56,6 +56,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     };
 
     public static int COL_TITLE = 1;
+    public static int COL_DATE = 3;
 
     private Uri uri;
 
