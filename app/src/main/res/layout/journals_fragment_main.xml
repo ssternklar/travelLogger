@@ -17,7 +17,8 @@
     <ListView
         android:id="@+id/listview_journal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:choiceMode="singleChoice"/>
         <!--android:divider="@color/light_teal"-->
         <!--android:dividerHeight="1dp"-->
         />

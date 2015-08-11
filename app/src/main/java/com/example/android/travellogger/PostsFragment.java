@@ -65,8 +65,8 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
                              Bundle savedInstanceState) {
         if(MainActivity.ismTwoPane()) {
             getActivity().setTitle("Posts");
-            setHasOptionsMenu(true);
         }
+        setHasOptionsMenu(true);
         //return inflater.inflate(R.layout.fragment_main, container, false);
         /*String[] data = {
                 "Post 1 Title",

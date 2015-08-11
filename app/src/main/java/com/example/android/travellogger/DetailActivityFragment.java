@@ -31,6 +31,7 @@ public class DetailActivityFragment extends Fragment {
     TextView titleTextView;
     ImageView imageView;
 
+    boolean initialized = false;
     public DetailActivityFragment() {
         setHasOptionsMenu(true);
     }
@@ -51,13 +52,15 @@ public class DetailActivityFragment extends Fragment {
 
     public void init()
     {
-        String uriString;
+        String uriString = null;
         boolean mTwoPane = MainActivity.ismTwoPane();
         if (!mTwoPane) {
             uriString = intent.getStringExtra("uri");
         } else {
             Bundle bundle=this.getArguments();
-            uriString = bundle.getString("uri", null);
+            if (bundle != null ) {
+                uriString = bundle.getString("uri", null);
+            }
         }
 
         if(uriString != null)
@@ -92,19 +95,23 @@ public class DetailActivityFragment extends Fragment {
                 titleTextView.setText(text);
             }
             cursor.close();
+            initialized = true;
 
         }
         else {
-            if (mTwoPane) {
-                titleTextView.setText("Something went horribly wrong, please contact the developers and let them know you got this!!");
-
-            }
+            initialized = false;
         }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Retrieve the share menu item
+        if(initialized) {
+            inflater.inflate(R.menu.menu_detail, menu);
+            super.onCreateOptionsMenu(menu, inflater);
+        }
+
+
         MenuItem menuItem = menu.findItem(R.id.action_share);
 
         // Get the provider and hold onto it to set/change the share intent.

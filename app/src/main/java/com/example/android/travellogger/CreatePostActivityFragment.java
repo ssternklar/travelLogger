@@ -47,6 +47,7 @@ public class CreatePostActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         rootView= inflater.inflate(R.layout.fragment_create_post, container, false);
         TextView imgBtn = (TextView) rootView.findViewById(R.id.add_image_button);
         textBox = (EditText)rootView.findViewById(R.id.editText);
@@ -133,8 +134,8 @@ public class CreatePostActivityFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onStop()
+
+    public void saveStuff()
     {
         ContentValues values = new ContentValues();
         values.put(TravelContract.EntryEntry.COLUMN_TEXT, textBox.getText().toString());
@@ -152,6 +153,5 @@ public class CreatePostActivityFragment extends Fragment {
                 TravelContract.EntryEntry.COLUMN_ID + " = ?",
                 new String[] {id});
 
-        super.onStop();
     }
 }
