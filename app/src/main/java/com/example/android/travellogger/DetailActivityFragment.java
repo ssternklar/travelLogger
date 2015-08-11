@@ -30,6 +30,7 @@ public class DetailActivityFragment extends Fragment {
     Intent intent;
     TextView titleTextView;
     ImageView imageView;
+    Uri imageUri;
 
     boolean initialized = false;
     public DetailActivityFragment() {
@@ -79,7 +80,7 @@ public class DetailActivityFragment extends Fragment {
 
 
                 if (imageUriString != null) {
-                    Uri imageUri = Uri.parse(imageUriString);
+                    imageUri = Uri.parse(imageUriString);
                     try {
                         Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
                         imageView.setImageBitmap(bmp);
@@ -128,9 +129,24 @@ public class DetailActivityFragment extends Fragment {
     private Intent createShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
 //        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
         shareIntent.setType("images/*");
         shareIntent.putExtra(Intent.EXTRA_TEXT,
                 titleTextView.getText().toString());
+
+
+        if(imageUri != null) {
+            shareIntent.setType("images/*");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+        }
+        else
+        {
+            shareIntent.setType("text/plain");
+        }
+
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                titleTextView.getText().toString());
+
         return shareIntent;
     }
 }
