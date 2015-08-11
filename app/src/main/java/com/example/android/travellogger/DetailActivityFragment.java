@@ -45,7 +45,6 @@ public class DetailActivityFragment extends Fragment {
         intent = getActivity().getIntent();
 
         init();
-
         return rootView;
     }
 
