@@ -56,7 +56,7 @@ public class CreatePostActivityFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
             }
 
@@ -122,6 +122,8 @@ public class CreatePostActivityFragment extends Fragment {
 
             String imageContentPath = path;
             if(imageContentPath != null) {
+
+
                 Uri imageUri = Uri.parse(imageContentPath);
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
                 imageView.setImageBitmap(bitmap);

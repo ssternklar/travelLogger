@@ -81,6 +81,7 @@ public class DetailActivityFragment extends Fragment {
 
                 if (imageUriString != null) {
                     imageUri = Uri.parse(imageUriString);
+                    Log.d("Stuff", imageUriString);
                     try {
                         Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
                         imageView.setImageBitmap(bmp);
