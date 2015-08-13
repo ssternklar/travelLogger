@@ -1,4 +1,4 @@
-Travel Logger : A "journalling" app.
+#Travel Logger : A "journalling" app.
 
 This Android app lets you jot down experiences and memories of trips you take around the world. The idea is to create a journal for each trip you take and create different posts inside that journal about various experiences you had on that trip. Each post may contain an image (optional) and text. The posts can be shared with any social media app already installed on the device that supports text input. Additionally, there is an option to lock each journal with a generated passcode and have those accessible on the device only to you.
 Thanks for checking out Travel Logger!
