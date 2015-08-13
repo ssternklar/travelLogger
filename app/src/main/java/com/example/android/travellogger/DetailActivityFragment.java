@@ -136,13 +136,10 @@ public class DetailActivityFragment extends Fragment {
 
 
         if(imageUri != null) {
-            shareIntent.setType("images/*");
             shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
         }
-        else
-        {
-            shareIntent.setType("text/plain");
-        }
+        shareIntent.setType("text/plain");
+
 
         shareIntent.putExtra(Intent.EXTRA_TEXT,
                 titleTextView.getText().toString());
